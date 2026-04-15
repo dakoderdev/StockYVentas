@@ -10,9 +10,15 @@ public class Televisor : Producto
         PantallaTipo = pantallaTipo;
     }
 
-    public override int CalcularPrecioFinal()
+    public override decimal CalcularPrecioFinal()
     {
-        return (int)(Precio * 1.21m);
+        return Precio * 1.21m;
+    }
+
+    public override string MostrarDetalles()
+    {
+        return $"[ID: {Nombre}] - ${Precio:F2} (Precio final: ${CalcularPrecioFinal():F2}) - Stock: {Stock}\n" +
+               $"   └─ Pulgadas: {Pulgadas}\" | Tipo de pantalla: {PantallaTipo}";
     }
 }
 
@@ -27,9 +33,15 @@ public class Heladera : Producto
         Tipo = tipo;
     }
 
-    public override int CalcularPrecioFinal()
+    public override decimal CalcularPrecioFinal()
     {
-        return (int)(Precio * 1.21m);
+        return Precio * 1.18m;
+    }
+
+    public override string MostrarDetalles()
+    {
+        return $"[ID: {Id}] {Nombre} - ${Precio:F2} (Precio final: ${CalcularPrecioFinal():F2}) - Stock: {Stock}\n" +
+               $"   └─ Capacidad: {Capacidad} litros | Tipo: {Tipo}";
     }
 }
 
@@ -44,8 +56,14 @@ public class Lavarropa : Producto
         Tipo = tipo;
     }
 
-    public override int CalcularPrecioFinal()
+    public override decimal CalcularPrecioFinal()
     {
-        return (int)(Precio * 1.21m);
+        return Precio * 1.25m;
+    }
+
+    public override string MostrarDetalles()
+    {
+        return $"[ID: {Id}] {Nombre} - ${Precio:F2} (Precio final: ${CalcularPrecioFinal():F2}) - Stock: {Stock}\n" +
+               $"   └─ Carga: {Carga} kg | Tipo: {Tipo}";
     }
 }
