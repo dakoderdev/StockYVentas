@@ -1,0 +1,14 @@
+C:\Users\David\Documents\StockYVentas\bin\Debug\net10.0\StockYVentas.exe
+C:\Users\David\Documents\StockYVentas\bin\Debug\net10.0\StockYVentas.deps.json
+C:\Users\David\Documents\StockYVentas\bin\Debug\net10.0\StockYVentas.runtimeconfig.json
+C:\Users\David\Documents\StockYVentas\bin\Debug\net10.0\StockYVentas.dll
+C:\Users\David\Documents\StockYVentas\bin\Debug\net10.0\StockYVentas.pdb
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.AssemblyInfoInputs.cache
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.AssemblyInfo.cs
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.csproj.CoreCompileInputs.cache
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.dll
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\refint\StockYVentas.dll
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.pdb
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\StockYVentas.genruntimeconfig.cache
+C:\Users\David\Documents\StockYVentas\obj\Debug\net10.0\ref\StockYVentas.dll
