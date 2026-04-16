@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
+
+
+
 public class Sucursal
 {
     private static int nextId = 1;
@@ -9,7 +12,13 @@ public class Sucursal
     public string Nombre { get; set; }
     public string Ubicacion { get; set; }
 
+
+
+
     public List<Producto> ListaProductos { get; set; }
+
+
+
 
     public Sucursal(string nombre, string ubicacion)
     {
@@ -18,6 +27,9 @@ public class Sucursal
         Ubicacion = ubicacion;
         ListaProductos = new List<Producto>();
     }
+
+
+
 
     public void AgregarNuevoProducto(Producto producto)
     {
@@ -33,6 +45,9 @@ public class Sucursal
         }
     }
 
+
+
+
     public void ListarProductos()
     {
         if (ListaProductos.Count == 0)
@@ -47,6 +62,9 @@ public class Sucursal
         }
         Console.WriteLine();
     }
+
+
+
 
     public decimal VenderProducto(int id, int cantidad)
     {
@@ -64,6 +82,9 @@ public class Sucursal
     }
 }
 
+
+
+
 public abstract class Producto
 {
     private static int nextId = 1;
@@ -71,7 +92,13 @@ public abstract class Producto
     public string Nombre { get; set; }
     public decimal Precio { get; set; }
 
+
+
+
     public int Stock { get; set; }
+
+
+
 
     public Producto(string nombre, decimal precio, int stock)
     {
@@ -81,9 +108,18 @@ public abstract class Producto
         Stock = stock;
     }
 
+
+
+
     public abstract decimal CalcularPrecioFinal();
 
+
+
+
     public abstract string MostrarDetalles();
+
+
+
 
     public int AgregarStock(int cantidad)
     {
@@ -91,6 +127,9 @@ public abstract class Producto
         return Stock;
     }
 }
+
+
+
 
 class Program
 {
@@ -102,6 +141,9 @@ class Program
             new Sucursal("Norte", "Norte")
         };
 
+
+
+
         while (true)
         {
             Console.Clear();
@@ -112,6 +154,9 @@ class Program
             Console.WriteLine("0 - Salir");
             Console.Write("\nOpción: ");
 
+
+
+
             if (!int.TryParse(Console.ReadLine(), out int sucOpt) || sucOpt < 0 || sucOpt > 2)
             {
                 Console.WriteLine("Opción inválida. Presione cualquier tecla...");
@@ -119,14 +164,26 @@ class Program
                 continue;
             }
 
+
+
+
             if (sucOpt == 0) break;
+
+
+
 
             Sucursal sucursal = sucursales[sucOpt - 1];
             MenuSucursal(sucursal);
         }
 
+
+
+
         Console.WriteLine("Gracias por usar el sistema. ¡Hasta luego!");
     }
+
+
+
 
     static void MenuSucursal(Sucursal sucursal)
     {
@@ -141,12 +198,18 @@ class Program
             Console.WriteLine("0 - Volver atrás");
             Console.Write("\nOpción: ");
 
+
+
+
             if (!int.TryParse(Console.ReadLine(), out int accion) || accion < 0 || accion > 3)
             {
                 Console.WriteLine("Opción inválida. Presione cualquier tecla...");
                 Console.ReadKey();
                 continue;
             }
+
+
+
 
             switch (accion)
             {
@@ -165,6 +228,9 @@ class Program
         }
     }
 
+
+
+
     static void AgregarProducto(Sucursal sucursal)
     {
         Console.Clear();
@@ -175,6 +241,9 @@ class Program
         Console.WriteLine("3 - Lavarropa");
         Console.Write("\nOpción: ");
 
+
+
+
         if (!int.TryParse(Console.ReadLine(), out int tipo) || tipo < 1 || tipo > 3)
         {
             Console.WriteLine("Tipo inválido. Presione cualquier tecla...");
@@ -182,8 +251,14 @@ class Program
             return;
         }
 
+
+
+
         Console.Write("Nombre del producto: ");
-        string nombre = Console.ReadLine();
+        string nombre = Console.ReadLine() ?? "";
+
+
+
 
         Console.Write("Precio: $ ");
         if (!decimal.TryParse(Console.ReadLine(), out decimal precio) || precio <= 0)
@@ -193,6 +268,9 @@ class Program
             return;
         }
 
+
+
+
         Console.Write("Stock inicial: ");
         if (!int.TryParse(Console.ReadLine(), out int stock) || stock < 0)
         {
@@ -201,7 +279,13 @@ class Program
             return;
         }
 
-        Producto p = null;
+
+
+
+        Producto? p = null;
+
+
+
 
         switch (tipo)
         {
@@ -214,9 +298,12 @@ class Program
                     return;
                 }
                 Console.Write("Tipo de pantalla (ej: LED, OLED, QLED): ");
-                string pant = Console.ReadLine();
+                string pant = Console.ReadLine() ?? "";
                 p = new Televisor(nombre, precio, stock, pulg, pant);
                 break;
+
+
+
 
             case 2:
                 Console.Write("Capacidad en litros (ej: 500): ");
@@ -227,9 +314,12 @@ class Program
                     return;
                 }
                 Console.Write("Tipo (ej: Freezer, No Frost): ");
-                string tipHeladera = Console.ReadLine();
+                string tipHeladera = Console.ReadLine() ?? "";
                 p = new Heladera(nombre, precio, stock, cap, tipHeladera);
                 break;
+
+
+
 
             case 3:
                 Console.Write("Carga en kg (ej: 8): ");
@@ -240,15 +330,24 @@ class Program
                     return;
                 }
                 Console.Write("Tipo (ej: Automático, Semi): ");
-                string tipLavarropa = Console.ReadLine();
+                string tipLavarropa = Console.ReadLine() ?? "";
                 p = new Lavarropa(nombre, precio, stock, carga, tipLavarropa);
                 break;
         }
+if (p != null)
+{
+    sucursal.AgregarNuevoProducto(p);
+}
 
-        sucursal.AgregarNuevoProducto(p);
-        Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
+
+
+
+Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
         Console.ReadKey();
     }
+
+
+
 
     static void ListarProductos(Sucursal sucursal)
     {
@@ -259,10 +358,16 @@ class Program
         Console.ReadKey();
     }
 
+
+
+
     static void VenderProducto(Sucursal sucursal)
     {
         Console.Clear();
         Console.WriteLine("========== REALIZAR VENTA ==========");
+
+
+
 
         if (sucursal.ListaProductos.Count == 0)
         {
@@ -272,7 +377,13 @@ class Program
             return;
         }
 
+
+
+
         sucursal.ListarProductos();
+
+
+
 
         Console.Write("Ingrese código de producto a vender: ");
         if (!int.TryParse(Console.ReadLine(), out int id))
@@ -282,6 +393,9 @@ class Program
             return;
         }
 
+
+
+
         Console.Write("Cantidad a vender: ");
         if (!int.TryParse(Console.ReadLine(), out int cant) || cant <= 0)
         {
@@ -289,6 +403,9 @@ class Program
             Console.ReadKey();
             return;
         }
+
+
+
 
         try
         {

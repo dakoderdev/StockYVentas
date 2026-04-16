@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\David\\Documents\\StockYVentas\\StockYVentas.csproj": {}
+    "C:\\Users\\David\\Documents\\PROGRAMACIÓN II\\StockYVentas\\StockYVentas.csproj": {}
   },
   "projects": {
-    "C:\\Users\\David\\Documents\\StockYVentas\\StockYVentas.csproj": {
+    "C:\\Users\\David\\Documents\\PROGRAMACIÓN II\\StockYVentas\\StockYVentas.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\David\\Documents\\StockYVentas\\StockYVentas.csproj",
+        "projectUniqueName": "C:\\Users\\David\\Documents\\PROGRAMACIÓN II\\StockYVentas\\StockYVentas.csproj",
         "projectName": "StockYVentas",
-        "projectPath": "C:\\Users\\David\\Documents\\StockYVentas\\StockYVentas.csproj",
+        "projectPath": "C:\\Users\\David\\Documents\\PROGRAMACIÓN II\\StockYVentas\\StockYVentas.csproj",
         "packagesPath": "C:\\Users\\David\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\David\\Documents\\StockYVentas\\obj\\",
+        "outputPath": "C:\\Users\\David\\Documents\\PROGRAMACIÓN II\\StockYVentas\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\David\\AppData\\Roaming\\NuGet\\NuGet.Config"
