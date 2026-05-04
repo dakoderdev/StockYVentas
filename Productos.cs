@@ -1,3 +1,31 @@
+public abstract class Producto
+{
+    private static int nextId = 1;
+    public int Id { get; set; }
+    public string Nombre { get; set; }
+    public decimal Precio { get; set; }
+
+    public int Stock { get; set; }
+
+    public Producto(string nombre, decimal precio, int stock)
+    {
+        Id = nextId++;
+        Nombre = nombre;
+        Precio = precio;
+        Stock = stock;
+    }
+
+    public abstract decimal CalcularPrecioFinal();
+
+    public abstract string MostrarDetalles();
+
+    public int AgregarStock(int cantidad)
+    {
+        Stock += cantidad;
+        return Stock;
+    }
+}
+
 public class Televisor : Producto
 {
     public int Pulgadas { get; set; }

@@ -1,119 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MySql.Data.MySqlClient;
-
-public class Sucursal
-{
-    private static int nextId = 1;
-    public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Ubicacion { get; set; }
-
-    public List<Producto> ListaProductos { get; set; }
-
-    public Sucursal(string nombre, string ubicacion)
-    {
-        Id = nextId++;
-        Nombre = nombre;
-        Ubicacion = ubicacion;
-        ListaProductos = new List<Producto>();
-    }
-
-    public void AgregarNuevoProducto(Producto producto)
-    {
-        var productoFiltrado = ListaProductos.Where(p => p.Id == producto.Id);
-        if (!productoFiltrado.Any())
-        {
-            ListaProductos.Add(producto);
-        }
-        else
-        {
-            var productoExistente = ListaProductos.First(p => p.Id == producto.Id);
-            productoExistente.AgregarStock(producto.Stock);
-        }
-    }
-
-    public void ListarProductos()
-    {
-        string consulta = "SELECT * FROM Producto WHERE IdSucursal = @id";
-        MySqlCommand comando = new MySqlCommand(consulta, DB.Conexion);
-        comando.Parameters.AddWithValue("@id", Id);
-
-        MySqlDataReader reader = comando.ExecuteReader();
-
-        Console.WriteLine("\n=== Productos Disponibles ===");
-        bool hayProductos = false;
-
-        while (reader.Read())
-        {
-            hayProductos = true;
-            Console.WriteLine($"ID: {reader["IdProducto"]} | Nombre: {reader["Nombre"]} | Precio: ${reader["Precio"]} | Stock: {reader["Stock"]}");
-        }
-
-        reader.Close();
-
-        if (!hayProductos)
-            Console.WriteLine("No hay productos disponibles.");
-
-        Console.WriteLine();
-    }
-
-    public decimal VenderProducto(int id, int cantidad)
-    {
-        var producto = ListaProductos.FirstOrDefault(p => p.Id == id);
-        if (producto == null)
-        {
-            throw new Exception("Producto no encontrado");
-        }
-        if (producto.Stock < cantidad)
-        {
-            throw new Exception("Stock insuficiente");
-        }
-        producto.Stock -= cantidad;
-        return producto.CalcularPrecioFinal() * cantidad;
-    }
-}
-
-public abstract class Producto
-{
-    private static int nextId = 1;
-    public int Id { get; set; }
-    public string Nombre { get; set; }
-    public decimal Precio { get; set; }
-
-    public int Stock { get; set; }
-
-    public Producto(string nombre, decimal precio, int stock)
-    {
-        Id = nextId++;
-        Nombre = nombre;
-        Precio = precio;
-        Stock = stock;
-    }
-
-    public abstract decimal CalcularPrecioFinal();
-
-    public abstract string MostrarDetalles();
-
-    public int AgregarStock(int cantidad)
-    {
-        Stock += cantidad;
-        return Stock;
-    }
-}
-
-public static class DB
-{
-    private static string connectionString = "server=localhost;user=root;password=brat;database=ElectrodomesticosDB";
-    public static MySqlConnection? Conexion { get; private set; }
-
-    public static void Conectar()
-    {
-        Conexion = new MySqlConnection(connectionString);
-        Conexion.Open();
-    }
-}
+using Org.BouncyCastle.Tls.Crypto.Impl;
 class Program
 {
     static void Main(string[] args)
@@ -137,20 +25,15 @@ class Program
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("========== SISTEMA DE GESTIÓN DE STOCK Y VENTAS ==========");
+            EscribirTitulo("SISTEMA DE GESTIÓN DE STOCK Y VENTAS");
             Console.WriteLine("Seleccione sucursal:");
-            Console.WriteLine("1 - Sucursal Centro");
-            Console.WriteLine("2 - Sucursal Norte");
-            Console.WriteLine("0 - Salir");
+            ListarMenu(new string[]
+            {"Sucursal Centro",
+            "Sucursal Norte"},
+            "Salir");
             Console.Write("\nOpción: ");
 
-            if (!int.TryParse(Console.ReadLine(), out int sucOpt) || sucOpt < 0 || sucOpt > 2)
-            {
-                Console.WriteLine("Opción inválida. Presione cualquier tecla...");
-                Console.ReadKey();
-                continue;
-            }
-
+            int sucOpt = ValidarInput(0, 2);
             if (sucOpt == 0) break;
 
             Sucursal sucursal = sucursales[sucOpt - 1];
@@ -164,22 +47,18 @@ class Program
         while (true)
         {
             Console.Clear();
-            Console.WriteLine($"========== {sucursal.Nombre.ToUpper()} ==========");
+            EscribirTitulo("SUCURSAL " + sucursal.Nombre);
             Console.WriteLine("Seleccione acción:");
-            Console.WriteLine("1 - Agregar producto");
-            Console.WriteLine("2 - Modificar producto");
-            Console.WriteLine("3 - Eliminar producto");
-            Console.WriteLine("4 - Listar productos");
-            Console.WriteLine("5 - Vender producto");
-            Console.WriteLine("0 - Volver atrás");
+            ListarMenu(new string[]
+            {"Agregar producto",
+            "Modificar producto",
+            "Eliminar producto",
+            "Listar productos",
+            "Vender producto"},
+            "Volver atrás");
             Console.Write("\nOpción: ");
 
-            if (!int.TryParse(Console.ReadLine(), out int accion) || accion < 0 || accion > 5)
-            {
-                Console.WriteLine("Opción inválida. Presione cualquier tecla...");
-                Console.ReadKey();
-                continue;
-            }
+            int accion = ValidarInput(0, 5);
 
             switch (accion)
             {
@@ -207,19 +86,18 @@ class Program
     static void AgregarProducto(Sucursal sucursal) // 1
     {
         Console.Clear();
-        Console.WriteLine("========== AGREGAR PRODUCTO ==========");
+        EscribirTitulo("AGREGAR PRODUCTO");
         Console.WriteLine("Seleccione tipo de producto:");
-        Console.WriteLine("1 - Televisor");
-        Console.WriteLine("2 - Heladera");
-        Console.WriteLine("3 - Lavarropa");
+        ListarMenu(new string[] { "Televisor", "Heladera", "Lavarropa" }, "Cancelar");
         Console.Write("\nOpción: ");
 
-        if (!int.TryParse(Console.ReadLine(), out int tipo) || tipo < 1 || tipo > 3)
+        if (!int.TryParse(Console.ReadLine(), out int tipo) || tipo < 0 || tipo > 3)
         {
             Console.WriteLine("Tipo inválido. Presione cualquier tecla...");
             Console.ReadKey();
             return;
         }
+        if (tipo == 0) return;
 
         Console.Write("Nombre del producto: ");
         string nombre = Console.ReadLine() ?? "";
@@ -286,9 +164,12 @@ class Program
         if (p != null)
         {
             sucursal.AgregarNuevoProducto(p);
+            Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
         }
-
-        Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
+        else
+        {
+            Console.WriteLine("\n✗ No se pudo agregar el producto. Presione cualquier tecla...");
+        }
         Console.ReadKey();
     }
 
@@ -299,7 +180,7 @@ class Program
     static void ListarProductos(Sucursal sucursal) // 2
     {
         Console.Clear();
-        Console.WriteLine($"========== PRODUCTOS DE {sucursal.Nombre.ToUpper()} ==========");
+        EscribirTitulo($"PRODUCTOS DE {sucursal.Nombre}");
         sucursal.ListarProductos();
         Console.WriteLine("Presione cualquier tecla para volver...");
         Console.ReadKey();
@@ -308,7 +189,7 @@ class Program
     static void VenderProducto(Sucursal sucursal) // 3
     {
         Console.Clear();
-        Console.WriteLine("========== REALIZAR VENTA ==========");
+        EscribirTitulo("REALIZAR VENTA");
 
         if (sucursal.ListaProductos.Count == 0)
         {
@@ -342,7 +223,7 @@ class Program
             var prod = sucursal.ListaProductos.First(p => p.Id == id);
 
             Console.Clear();
-            Console.WriteLine("========== VENTA REALIZADA CON ÉXITO ==========");
+            EscribirTitulo("VENTA REALIZADA CON ÉXITO");
             Console.WriteLine($"Producto: {prod.Nombre}");
             Console.WriteLine($"Cantidad: {cant}");
             Console.WriteLine($"Precio total: ${total:F2}");
@@ -356,5 +237,48 @@ class Program
             Console.WriteLine("Presione cualquier tecla...");
             Console.ReadKey();
         }
+    }
+
+    static void EscribirTitulo(string titulo)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"========== {titulo.ToUpper()} ==========");
+        Console.ResetColor();
+    }
+
+    static void EscribirInput(int index, string input)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write(index);
+        Console.ResetColor();
+        Console.Write($" - {input}\n");
+    }
+
+    static void ListarMenu(string[] inputs, string returnInput)
+    {
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            EscribirInput(i + 1, inputs[i]);
+        }
+        EscribirInput(0, returnInput);
+    }
+
+    static int ValidarInput(int min, int max)
+    {
+        while (true)
+        {
+            if (int.TryParse(Console.ReadLine(), out int num) && num >= min && num <= max)
+                return num;
+
+            ReemplazarLineaAnterior("Opción inválida. Intente de nuevo: ");
+        }
+    }
+
+    static void ReemplazarLineaAnterior(string linea)
+    {
+        Console.SetCursorPosition(0, Console.CursorTop - 1);
+        Console.Write(new string(' ', Console.WindowWidth));
+        Console.SetCursorPosition(0, Console.CursorTop);
+        Console.Write(linea);
     }
 }
