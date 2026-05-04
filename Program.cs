@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MySql.Data.MySqlClient;
 
 public class Sucursal
 {
@@ -35,16 +36,26 @@ public class Sucursal
 
     public void ListarProductos()
     {
-        if (ListaProductos.Count == 0)
-        {
-            Console.WriteLine("No hay productos disponibles.");
-            return;
-        }
+        string consulta = "SELECT * FROM Producto WHERE IdSucursal = @id";
+        MySqlCommand comando = new MySqlCommand(consulta, DB.Conexion);
+        comando.Parameters.AddWithValue("@id", Id);
+
+        MySqlDataReader reader = comando.ExecuteReader();
+
         Console.WriteLine("\n=== Productos Disponibles ===");
-        foreach (var p in ListaProductos)
+        bool hayProductos = false;
+
+        while (reader.Read())
         {
-            Console.WriteLine(p.MostrarDetalles());
+            hayProductos = true;
+            Console.WriteLine($"ID: {reader["IdProducto"]} | Nombre: {reader["Nombre"]} | Precio: ${reader["Precio"]} | Stock: {reader["Stock"]}");
         }
+
+        reader.Close();
+
+        if (!hayProductos)
+            Console.WriteLine("No hay productos disponibles.");
+
         Console.WriteLine();
     }
 
@@ -92,10 +103,31 @@ public abstract class Producto
     }
 }
 
+public static class DB
+{
+    private static string connectionString = "server=localhost;user=root;password=brat;database=ElectrodomesticosDB";
+    public static MySqlConnection? Conexion { get; private set; }
+
+    public static void Conectar()
+    {
+        Conexion = new MySqlConnection(connectionString);
+        Conexion.Open();
+    }
+}
 class Program
 {
     static void Main(string[] args)
     {
+        try
+        {
+            DB.Conectar();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al conectar a la base de datos: " + ex.Message);
+            return;
+        }
+
         List<Sucursal> sucursales = new List<Sucursal>
         {
             new Sucursal("Centro", "Centro"),
@@ -135,12 +167,14 @@ class Program
             Console.WriteLine($"========== {sucursal.Nombre.ToUpper()} ==========");
             Console.WriteLine("Seleccione acción:");
             Console.WriteLine("1 - Agregar producto");
-            Console.WriteLine("2 - Listar productos");
-            Console.WriteLine("3 - Vender producto");
+            Console.WriteLine("2 - Modificar producto");
+            Console.WriteLine("3 - Eliminar producto");
+            Console.WriteLine("4 - Listar productos");
+            Console.WriteLine("5 - Vender producto");
             Console.WriteLine("0 - Volver atrás");
             Console.Write("\nOpción: ");
 
-            if (!int.TryParse(Console.ReadLine(), out int accion) || accion < 0 || accion > 3)
+            if (!int.TryParse(Console.ReadLine(), out int accion) || accion < 0 || accion > 5)
             {
                 Console.WriteLine("Opción inválida. Presione cualquier tecla...");
                 Console.ReadKey();
@@ -153,9 +187,15 @@ class Program
                     AgregarProducto(sucursal);
                     break;
                 case 2:
-                    ListarProductos(sucursal);
+                    ModificarProducto(sucursal);
                     break;
                 case 3:
+                    EliminarProducto(sucursal);
+                    break;
+                case 4:
+                    ListarProductos(sucursal);
+                    break;
+                case 5:
                     VenderProducto(sucursal);
                     break;
                 case 0:
@@ -243,14 +283,18 @@ class Program
                 p = new Lavarropa(nombre, precio, stock, carga, tipLavarropa);
                 break;
         }
-if (p != null)
-{
-    sucursal.AgregarNuevoProducto(p);
-}
+        if (p != null)
+        {
+            sucursal.AgregarNuevoProducto(p);
+        }
 
-Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
+        Console.WriteLine("\n✓ Producto agregado exitosamente. Presione cualquier tecla...");
         Console.ReadKey();
     }
+
+    static void ModificarProducto(Sucursal sucursal) { }
+
+    static void EliminarProducto(Sucursal sucursal) { }
 
     static void ListarProductos(Sucursal sucursal) // 2
     {
