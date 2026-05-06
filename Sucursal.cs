@@ -38,7 +38,7 @@ public class Sucursal
                 case "Televisor":
                     p = new Televisor
                     {
-                        Pulgadas     = Convert.ToInt32(reader["Pulgadas"]),
+                        Pulgadas = Convert.ToInt32(reader["Pulgadas"]),
                         PantallaTipo = reader["TipoPantalla"].ToString() ?? ""
                     };
                     break;
@@ -47,7 +47,7 @@ public class Sucursal
                     p = new Heladera
                     {
                         CapacidadLitros = Convert.ToInt32(reader["CapacidadLitros"]),
-                        Tipo            = reader["TipoHeladera"].ToString() ?? ""
+                        Tipo = reader["TipoHeladera"].ToString() ?? ""
                     };
                     break;
 
@@ -55,7 +55,7 @@ public class Sucursal
                     p = new Lavarropas
                     {
                         CargaKg = Convert.ToInt32(reader["CargaKg"]),
-                        Tipo    = reader["TipoLavarropas"].ToString() ?? ""
+                        Tipo = reader["TipoLavarropas"].ToString() ?? ""
                     };
                     break;
             }
@@ -63,10 +63,10 @@ public class Sucursal
             if (p != null)
             {
                 p.IdProducto = Convert.ToInt32(reader["IdProducto"]);
-                p.Codigo     = Convert.ToInt32(reader["Codigo"]);
-                p.Nombre     = reader["Nombre"].ToString() ?? "";
-                p.Precio     = Convert.ToDecimal(reader["Precio"]);
-                p.Stock      = Convert.ToInt32(reader["Stock"]);
+                p.Codigo = Convert.ToInt32(reader["Codigo"]);
+                p.Nombre = reader["Nombre"].ToString() ?? "";
+                p.Precio = Convert.ToDecimal(reader["Precio"]);
+                p.Stock = Convert.ToInt32(reader["Stock"]);
                 p.IdSucursal = Id;
                 lista.Add(p);
             }
@@ -96,18 +96,18 @@ public class Sucursal
             {
                 string tipoTag = p switch
                 {
-                    Televisor  => "TV ",
-                    Heladera   => "HEL",
+                    Televisor => "TV ",
+                    Heladera => "HEL",
                     Lavarropas => "LAV",
-                    _          => "???"
+                    _ => "???"
                 };
 
                 string detalles = p switch
                 {
-                    Televisor  tv  => $"{tv.Pulgadas}\" {tv.PantallaTipo}",
-                    Heladera   hel => $"{hel.CapacidadLitros}L {hel.Tipo}",
+                    Televisor tv => $"{tv.Pulgadas}\" {tv.PantallaTipo}",
+                    Heladera hel => $"{hel.CapacidadLitros}L {hel.Tipo}",
                     Lavarropas lav => $"{lav.CargaKg}kg {lav.Tipo}",
-                    _              => ""
+                    _ => ""
                 };
 
                 Console.Write($"  {p.Codigo,4}  ");
@@ -119,16 +119,17 @@ public class Sucursal
         }
 
         Console.WriteLine();
+
     }
 
     public void InsertarProducto(Producto p, int codigo)
     {
         string tipoStr = p switch
         {
-            Televisor  => "Televisor",
-            Heladera   => "Heladera",
+            Televisor => "Televisor",
+            Heladera => "Heladera",
             Lavarropas => "Lavarropas",
-            _          => throw new Exception("Tipo de producto desconocido")
+            _ => throw new Exception("Tipo de producto desconocido")
         };
 
         string sqlProducto = @"
@@ -137,11 +138,11 @@ public class Sucursal
             SELECT LAST_INSERT_ID();";
 
         using var cmd = new MySqlCommand(sqlProducto, DB.Conexion);
-        cmd.Parameters.AddWithValue("@codigo",   codigo);
-        cmd.Parameters.AddWithValue("@nombre",   p.Nombre);
-        cmd.Parameters.AddWithValue("@precio",   p.Precio);
-        cmd.Parameters.AddWithValue("@stock",    p.Stock);
-        cmd.Parameters.AddWithValue("@tipo",     tipoStr);
+        cmd.Parameters.AddWithValue("@codigo", codigo);
+        cmd.Parameters.AddWithValue("@nombre", p.Nombre);
+        cmd.Parameters.AddWithValue("@precio", p.Precio);
+        cmd.Parameters.AddWithValue("@stock", p.Stock);
+        cmd.Parameters.AddWithValue("@tipo", tipoStr);
         cmd.Parameters.AddWithValue("@sucursal", Id);
 
         int newId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -149,40 +150,40 @@ public class Sucursal
         switch (p)
         {
             case Televisor tv:
-            {
-                using var c1 = new MySqlCommand(
-                    "INSERT INTO Televisor (IdProducto, Pulgadas, TipoPantalla) VALUES (@id, @p, @t)",
-                    DB.Conexion);
-                c1.Parameters.AddWithValue("@id", newId);
-                c1.Parameters.AddWithValue("@p",  tv.Pulgadas);
-                c1.Parameters.AddWithValue("@t",  tv.PantallaTipo);
-                c1.ExecuteNonQuery();
-                break;
-            }
+                {
+                    using var c1 = new MySqlCommand(
+                        "INSERT INTO Televisor (IdProducto, Pulgadas, TipoPantalla) VALUES (@id, @p, @t)",
+                        DB.Conexion);
+                    c1.Parameters.AddWithValue("@id", newId);
+                    c1.Parameters.AddWithValue("@p", tv.Pulgadas);
+                    c1.Parameters.AddWithValue("@t", tv.PantallaTipo);
+                    c1.ExecuteNonQuery();
+                    break;
+                }
 
             case Heladera hel:
-            {
-                using var c2 = new MySqlCommand(
-                    "INSERT INTO Heladera (IdProducto, CapacidadLitros, Tipo) VALUES (@id, @c, @t)",
-                    DB.Conexion);
-                c2.Parameters.AddWithValue("@id", newId);
-                c2.Parameters.AddWithValue("@c",  hel.CapacidadLitros);
-                c2.Parameters.AddWithValue("@t",  hel.Tipo);
-                c2.ExecuteNonQuery();
-                break;
-            }
+                {
+                    using var c2 = new MySqlCommand(
+                        "INSERT INTO Heladera (IdProducto, CapacidadLitros, Tipo) VALUES (@id, @c, @t)",
+                        DB.Conexion);
+                    c2.Parameters.AddWithValue("@id", newId);
+                    c2.Parameters.AddWithValue("@c", hel.CapacidadLitros);
+                    c2.Parameters.AddWithValue("@t", hel.Tipo);
+                    c2.ExecuteNonQuery();
+                    break;
+                }
 
             case Lavarropas lav:
-            {
-                using var c3 = new MySqlCommand(
-                    "INSERT INTO Lavarropas (IdProducto, CargaKg, Tipo) VALUES (@id, @c, @t)",
-                    DB.Conexion);
-                c3.Parameters.AddWithValue("@id", newId);
-                c3.Parameters.AddWithValue("@c",  lav.CargaKg);
-                c3.Parameters.AddWithValue("@t",  lav.Tipo);
-                c3.ExecuteNonQuery();
-                break;
-            }
+                {
+                    using var c3 = new MySqlCommand(
+                        "INSERT INTO Lavarropas (IdProducto, CargaKg, Tipo) VALUES (@id, @c, @t)",
+                        DB.Conexion);
+                    c3.Parameters.AddWithValue("@id", newId);
+                    c3.Parameters.AddWithValue("@c", lav.CargaKg);
+                    c3.Parameters.AddWithValue("@t", lav.Tipo);
+                    c3.ExecuteNonQuery();
+                    break;
+                }
         }
     }
 
@@ -190,15 +191,15 @@ public class Sucursal
     {
         string sqlSelect = "SELECT Nombre, Precio, Stock FROM Producto WHERE Codigo = @codigo AND IdSucursal = @sucursal";
         using var cmdSel = new MySqlCommand(sqlSelect, DB.Conexion);
-        cmdSel.Parameters.AddWithValue("@codigo",   codigo);
+        cmdSel.Parameters.AddWithValue("@codigo", codigo);
         cmdSel.Parameters.AddWithValue("@sucursal", Id);
         using var reader = cmdSel.ExecuteReader();
 
         if (!reader.Read()) { reader.Close(); return false; }
 
-        string  nombreFinal = string.IsNullOrWhiteSpace(nuevoNombre) ? reader["Nombre"].ToString()!        : nuevoNombre;
+        string nombreFinal = string.IsNullOrWhiteSpace(nuevoNombre) ? reader["Nombre"].ToString()! : nuevoNombre;
         decimal precioFinal = nuevoPrecio <= 0 ? Convert.ToDecimal(reader["Precio"]) : nuevoPrecio;
-        int     stockFinal  = nuevoStock   <  0 ? Convert.ToInt32(reader["Stock"])   : nuevoStock;
+        int stockFinal = nuevoStock < 0 ? Convert.ToInt32(reader["Stock"]) : nuevoStock;
         reader.Close();
 
         string sqlUpdate = @"
@@ -207,10 +208,10 @@ public class Sucursal
             WHERE Codigo = @codigo AND IdSucursal = @sucursal";
 
         using var cmdUpd = new MySqlCommand(sqlUpdate, DB.Conexion);
-        cmdUpd.Parameters.AddWithValue("@nombre",   nombreFinal);
-        cmdUpd.Parameters.AddWithValue("@precio",   precioFinal);
-        cmdUpd.Parameters.AddWithValue("@stock",    stockFinal);
-        cmdUpd.Parameters.AddWithValue("@codigo",   codigo);
+        cmdUpd.Parameters.AddWithValue("@nombre", nombreFinal);
+        cmdUpd.Parameters.AddWithValue("@precio", precioFinal);
+        cmdUpd.Parameters.AddWithValue("@stock", stockFinal);
+        cmdUpd.Parameters.AddWithValue("@codigo", codigo);
         cmdUpd.Parameters.AddWithValue("@sucursal", Id);
 
         return cmdUpd.ExecuteNonQuery() > 0;
@@ -220,7 +221,7 @@ public class Sucursal
     {
         string sql = "DELETE FROM Producto WHERE Codigo = @codigo AND IdSucursal = @sucursal";
         using var cmd = new MySqlCommand(sql, DB.Conexion);
-        cmd.Parameters.AddWithValue("@codigo",   codigo);
+        cmd.Parameters.AddWithValue("@codigo", codigo);
         cmd.Parameters.AddWithValue("@sucursal", Id);
         return cmd.ExecuteNonQuery() > 0;
     }
@@ -228,14 +229,14 @@ public class Sucursal
     public decimal RegistrarVenta(int codigoProducto, int cantidad)
     {
         var productos = ObtenerProductos();
-        var producto  = productos.FirstOrDefault(p => p.Codigo == codigoProducto)
+        var producto = productos.FirstOrDefault(p => p.Codigo == codigoProducto)
                         ?? throw new Exception("Producto no encontrado en esta sucursal.");
 
         if (producto.Stock < cantidad)
             throw new Exception($"Stock insuficiente. Disponible: {producto.Stock} unidad/es.");
 
         decimal precioUnitario = producto.CalcularPrecioFinal();
-        decimal total          = precioUnitario * cantidad;
+        decimal total = precioUnitario * cantidad;
 
         using var transaccion = DB.Conexion!.BeginTransaction();
         try
@@ -251,16 +252,16 @@ public class Sucursal
                 INSERT INTO DetalleVenta (IdVenta, IdProducto, Cantidad, PrecioUnitario)
                 VALUES (@venta, @prod, @cant, @precio)";
             using var cmdD = new MySqlCommand(sqlDet, DB.Conexion, transaccion);
-            cmdD.Parameters.AddWithValue("@venta",  idVenta);
-            cmdD.Parameters.AddWithValue("@prod",   producto.IdProducto);
-            cmdD.Parameters.AddWithValue("@cant",   cantidad);
+            cmdD.Parameters.AddWithValue("@venta", idVenta);
+            cmdD.Parameters.AddWithValue("@prod", producto.IdProducto);
+            cmdD.Parameters.AddWithValue("@cant", cantidad);
             cmdD.Parameters.AddWithValue("@precio", precioUnitario);
             cmdD.ExecuteNonQuery();
 
             string sqlStock = "UPDATE Producto SET Stock = Stock - @cant WHERE IdProducto = @id";
             using var cmdS = new MySqlCommand(sqlStock, DB.Conexion, transaccion);
             cmdS.Parameters.AddWithValue("@cant", cantidad);
-            cmdS.Parameters.AddWithValue("@id",   producto.IdProducto);
+            cmdS.Parameters.AddWithValue("@id", producto.IdProducto);
             cmdS.ExecuteNonQuery();
 
             transaccion.Commit();
@@ -272,5 +273,15 @@ public class Sucursal
         }
 
         return total;
+    }
+
+    public bool ExisteProducto(int codigo)
+    {  
+        string sql = "SELECT COUNT(*) FROM Producto WHERE Codigo = @cod AND IdSucursal = @suc";
+        using var cmd = new MySqlCommand(sql, DB.Conexion);
+        cmd.Parameters.AddWithValue("@cod", codigo);
+        cmd.Parameters.AddWithValue("@suc", Id);
+
+        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
     }
 }

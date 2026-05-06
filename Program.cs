@@ -87,12 +87,51 @@ class Program
         }
     }
 
+    static int LeerCodigo()
+    {
+        while (true)
+        {
+            Console.Write("\nCódigo (número único): ");
+
+            if (int.TryParse(Console.ReadLine(), out int codigo) && codigo > 0)
+                return codigo;
+
+            MostrarError("Código inválido.");
+        }
+    }
+
     static void AgregarProducto(Sucursal sucursal)
     {
         Console.Clear();
         EscribirTitulo("AGREGAR PRODUCTO");
 
-        Console.WriteLine("  Seleccione tipo de producto:\n");
+        int codigo;
+
+        while (true)
+        {
+            codigo = LeerCodigo();
+
+            if (!sucursal.ExisteProducto(codigo))
+                break;
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n  ⚠ Ya existe un producto con ese código.");
+            Console.ResetColor();
+
+            Console.WriteLine("  [1] Editar ese producto");
+            Console.WriteLine("  [2] Ingresar otro código");
+            Console.Write("\n  Opción: ");
+
+            int opt = ValidarInput(1, 2);
+
+            if (opt == 1)
+            {
+                ModificarProductoDirecto(sucursal, codigo);
+                return;
+            }
+        }
+
+        Console.WriteLine("\n  Seleccione tipo de producto:\n");
         ListarMenu(new[] { "Televisor", "Heladera", "Lavarropas" }, "Cancelar");
         Console.Write("\n  Opción: ");
         int tipo = ValidarInput(0, 3);
@@ -101,17 +140,19 @@ class Program
         Console.Write("\n  Nombre del producto: ");
         string nombre = Console.ReadLine() ?? "";
 
-        Console.Write("  Código (número único): ");
-        if (!int.TryParse(Console.ReadLine(), out int codigo) || codigo <= 0)
-        { MostrarError("Código inválido."); return; }
-
         Console.Write("  Precio base: $");
         if (!decimal.TryParse(Console.ReadLine(), out decimal precio) || precio <= 0)
-        { MostrarError("Precio inválido."); return; }
+        { 
+            MostrarError("Precio inválido."); 
+            return; 
+        }
 
         Console.Write("  Stock inicial: ");
         if (!int.TryParse(Console.ReadLine(), out int stock) || stock < 0)
-        { MostrarError("Stock inválido."); return; }
+        { 
+            MostrarError("Stock inválido."); 
+            return; 
+        }
 
         Producto? p = null;
 
@@ -120,31 +161,64 @@ class Program
             case 1:
                 Console.Write("  Pulgadas: ");
                 if (!int.TryParse(Console.ReadLine(), out int pulg) || pulg <= 0)
-                { MostrarError("Valor inválido."); return; }
+                { 
+                    MostrarError("Valor inválido."); 
+                    return; 
+                }
+
                 Console.Write("  Tipo de pantalla (LED / OLED / QLED): ");
                 string pant = Console.ReadLine() ?? "";
-                p = new Televisor { Nombre = nombre, Precio = precio, Stock = stock,
-                                    Pulgadas = pulg, PantallaTipo = pant };
+
+                p = new Televisor 
+                { 
+                    Nombre = nombre, 
+                    Precio = precio, 
+                    Stock = stock,
+                    Pulgadas = pulg, 
+                    PantallaTipo = pant 
+                };
                 break;
 
             case 2:
                 Console.Write("  Capacidad en litros: ");
                 if (!int.TryParse(Console.ReadLine(), out int cap) || cap <= 0)
-                { MostrarError("Valor inválido."); return; }
+                { 
+                    MostrarError("Valor inválido."); 
+                    return; 
+                }
+
                 Console.Write("  Tipo (No Frost / Freezer): ");
                 string tipHel = Console.ReadLine() ?? "";
-                p = new Heladera { Nombre = nombre, Precio = precio, Stock = stock,
-                                   CapacidadLitros = cap, Tipo = tipHel };
+
+                p = new Heladera 
+                { 
+                    Nombre = nombre, 
+                    Precio = precio, 
+                    Stock = stock,
+                    CapacidadLitros = cap, 
+                    Tipo = tipHel 
+                };
                 break;
 
             case 3:
                 Console.Write("  Carga en kg: ");
                 if (!int.TryParse(Console.ReadLine(), out int carga) || carga <= 0)
-                { MostrarError("Valor inválido."); return; }
+                { 
+                    MostrarError("Valor inválido."); 
+                    return; 
+                }
+
                 Console.Write("  Tipo (Automático / Semi): ");
                 string tipLav = Console.ReadLine() ?? "";
-                p = new Lavarropas { Nombre = nombre, Precio = precio, Stock = stock,
-                                     CargaKg = carga, Tipo = tipLav };
+
+                p = new Lavarropas 
+                { 
+                    Nombre = nombre, 
+                    Precio = precio, 
+                    Stock = stock,
+                    CargaKg = carga, 
+                    Tipo = tipLav 
+                };
                 break;
         }
 
@@ -153,6 +227,7 @@ class Program
         try
         {
             sucursal.InsertarProducto(p, codigo);
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\n  ✓ Producto agregado exitosamente.");
             Console.ResetColor();
@@ -160,6 +235,41 @@ class Program
         catch (Exception ex)
         {
             MostrarError("No se pudo guardar: " + ex.Message);
+        }
+
+        Pausa();
+    }
+
+    static void ModificarProductoDirecto(Sucursal sucursal, int codigo)
+{
+    Console.Clear();
+    EscribirTitulo("MODIFICAR PRODUCTO");
+
+    Console.Write("  Nuevo nombre (Enter para no cambiar): ");
+    string nuevoNombre = Console.ReadLine() ?? "";
+
+    Console.Write("  Nuevo precio base (0 para no cambiar): $");
+    decimal.TryParse(Console.ReadLine(), out decimal nuevoPrecio);
+
+    Console.Write("  Nuevo stock (-1 para no cambiar): ");
+    int.TryParse(Console.ReadLine(), out int nuevoStock);
+
+    try
+    {
+            bool ok = sucursal.ModificarProducto(codigo, nuevoNombre, nuevoPrecio, nuevoStock);
+
+            if (ok)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n  ✓ Producto modificado correctamente.");
+                Console.ResetColor();
+            }
+            else
+                MostrarError("No se encontró el producto.");
+        }
+        catch (Exception ex)
+        {
+            MostrarError("Error al modificar: " + ex.Message);
         }
 
         Pausa();
