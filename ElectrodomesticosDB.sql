@@ -92,35 +92,3 @@ CREATE TABLE DetalleVenta (
 INSERT INTO Sucursal (Nombre) VALUES 
 ('Centro'),
 ('Norte');
-
--- Productos base
-INSERT INTO Producto (Codigo, Nombre, Precio, Stock, TipoProducto, IdSucursal) VALUES
-(101, 'TV Samsung 50"', 150000, 5, 'Televisor', 1),
-(102, 'Heladera LG', 200000, 3, 'Heladera', 1),
-(103, 'Lavarropas Drean', 180000, 4, 'Lavarropas', 2);
-
--- Datos específicos Televisor
-INSERT INTO Televisor (IdProducto, Pulgadas, TipoPantalla) VALUES
-(1, 50, 'LED');
-
--- Datos específicos Heladera
-INSERT INTO Heladera (IdProducto, CapacidadLitros, Tipo) VALUES
-(2, 350, 'No Frost');
-
--- Datos específicos Lavarropas
-INSERT INTO Lavarropas (IdProducto, CargaKg, Tipo) VALUES
-(3, 7, 'Automático');
-
--- =========================================
--- CONSULTA DE PRUEBA
--- =========================================
--- Ver todos los productos con sucursal
-SELECT 
-    p.IdProducto,
-    p.Nombre,
-    p.Precio,
-    p.Stock,
-    p.TipoProducto,
-    s.Nombre AS Sucursal
-FROM Producto p
-JOIN Sucursal s ON p.IdSucursal = s.IdSucursal;
