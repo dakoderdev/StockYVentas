@@ -8,7 +8,6 @@
     public int IdSucursal { get; set; }
 
     public abstract decimal CalcularPrecioFinal();
-    public abstract string MostrarDetalles();
 
     public void AgregarStock(int cantidad) => Stock += cantidad;
 }
@@ -19,9 +18,6 @@ public class Televisor : Producto
     public string PantallaTipo { get; set; } = "";
 
     public override decimal CalcularPrecioFinal() => Precio * 1.21m;
-
-    public override string MostrarDetalles() =>
-        $"[TV ] {Nombre,-30} | ${CalcularPrecioFinal(),10:F2} | Stock: {Stock,3} | {Pulgadas}\" {PantallaTipo}";
 }
 
 public class Heladera : Producto
@@ -30,9 +26,6 @@ public class Heladera : Producto
     public string Tipo         { get; set; } = "";
 
     public override decimal CalcularPrecioFinal() => Precio * 1.18m;
-
-    public override string MostrarDetalles() =>
-        $"[HEL] {Nombre,-30} | ${CalcularPrecioFinal(),10:F2} | Stock: {Stock,3} | {CapacidadLitros}L {Tipo}";
 }
 
 public class Lavarropas : Producto
@@ -41,7 +34,4 @@ public class Lavarropas : Producto
     public string Tipo { get; set; } = "";
 
     public override decimal CalcularPrecioFinal() => Precio * 1.25m;
-
-    public override string MostrarDetalles() =>
-        $"[LAV] {Nombre,-30} | ${CalcularPrecioFinal(),10:F2} | Stock: {Stock,3} | {CargaKg}kg {Tipo}";
 }
